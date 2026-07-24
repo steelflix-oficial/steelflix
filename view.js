@@ -201,9 +201,9 @@ async function openModal(id) {
         const videoId = getYoutubeId(customItem.video);
         const driveUrl = getVideoEmbedUrl(customItem.video);
         if (videoId) {
-            videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&vq=hd720&hd=1" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;"></iframe>`;
+            videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&vq=hd720&hd=1" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;border-radius:10px;"></iframe>`;
         } else if (driveUrl) {
-            videoPlayer.innerHTML = `<iframe src="${driveUrl}" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;"></iframe>`;
+            videoPlayer.innerHTML = `<iframe src="${driveUrl}" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;border-radius:10px;"></iframe>`;
         } else {
             videoPlayer.innerHTML = `<video controls autoplay playsinline preload="auto" crossOrigin="anonymous" src="${customItem.video}" style="width:100%;height:100%;object-fit:contain;" onerror="this.innerHTML='<div style=display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;><i class=fas fa-exclamation-triangle style=font-size:2rem;></i><p>Error al cargar el video. Verifica que el enlace sea valido.</p></div>'"></video>`;
         }
@@ -270,9 +270,9 @@ async function playEpisode(cap) {
         const videoId = getYoutubeId(cap.video);
         const driveUrl = getVideoEmbedUrl(cap.video);
         if (videoId) {
-            videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&vq=hd720&hd=1" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;"></iframe>`;
+            videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&vq=hd720&hd=1" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;border-radius:10px;"></iframe>`;
         } else if (driveUrl) {
-            videoPlayer.innerHTML = `<iframe src="${driveUrl}" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;"></iframe>`;
+            videoPlayer.innerHTML = `<iframe src="${driveUrl}" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;border-radius:10px;"></iframe>`;
         } else {
             videoPlayer.innerHTML = `<video controls autoplay playsinline preload="auto" crossOrigin="anonymous" src="${cap.video}" style="width:100%;height:100%;object-fit:contain;" onerror="this.innerHTML='<div style=display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;><p>Error al cargar el video.</p></div>'"></video>`;
         }
