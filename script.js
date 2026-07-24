@@ -1,4 +1,4 @@
-﻿const peliculas = [];
+const peliculas = [];
 
 const series = [];
 
@@ -13,6 +13,99 @@ const fileURLs = {};
 const DB_NAME = 'BlueFlixDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'videos';
+
+const GH_REPO = 'steelflix-oficial/steelflix';
+const GH_FILE = 'data.json';
+const GH_API = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`;
+const GH_RAW = `https://raw.githubusercontent.com/${GH_REPO}/main/${GH_FILE}`;
+
+let ghFileSha = null;
+
+function getGhToken() {
+    return localStorage.getItem('SteelFlixGhToken') || '';
+}
+
+function setGhToken(t) {
+    localStorage.setItem('SteelFlixGhToken', t);
+}
+
+async function loadFromGitHub() {
+    try {
+        const res = await fetch(GH_RAW + '?t=' + Date.now());
+        if (!res.ok) return null;
+        return await res.json();
+    } catch (e) {
+        return null;
+    }
+}
+
+async function saveToGitHub(data) {
+    const token = getGhToken();
+    if (!token) return;
+    try {
+        if (!ghFileSha) {
+            const metaRes = await fetch(GH_API, {
+                headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+            });
+            if (metaRes.ok) {
+                const meta = await metaRes.json();
+                ghFileSha = meta.sha;
+            }
+        }
+        const body = {
+            message: 'SteelFlix sync ' + new Date().toISOString(),
+            content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2)))),
+        };
+        if (ghFileSha) body.sha = ghFileSha;
+        const res = await fetch(GH_API, {
+            method: 'PUT',
+            headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        if (res.ok) {
+            const result = await res.json();
+            ghFileSha = result.content.sha;
+        }
+    } catch (e) {
+        console.error('Error guardando en GitHub:', e);
+    }
+}
+
+function syncToCloud() {
+    const data = {
+        customContent: customContent,
+        favoritos: favoritos,
+        settings: JSON.parse(localStorage.getItem('SteelFlix-OficialSettings')) || null
+    };
+    saveToGitHub(data);
+}
+
+async function syncFromCloud() {
+    const data = await loadFromGitHub();
+    if (!data) return false;
+    if (data.customContent && data.customContent.length > 0) {
+        customContent = data.customContent;
+        localStorage.setItem('customBlueFlix', JSON.stringify(customContent));
+    }
+    if (data.favoritos) {
+        favoritos = data.favoritos;
+        localStorage.setItem('favoritosBlueFlix', JSON.stringify(favoritos));
+    }
+    if (data.settings) {
+        localStorage.setItem('SteelFlix-OficialSettings', JSON.stringify(data.settings));
+    }
+    return true;
+}
+
+function promptGithubToken() {
+    if (getGhToken()) return;
+    const t = prompt('Pega tu token de GitHub Personal Access Token para sincronizar en la nube.\n(Necesario solo una vez. Se guarda en tu navegador.)\n\nPara crear uno: GitHub > Settings > Developer settings > Personal access tokens > Tokens classic > Generate');
+    if (t && t.startsWith('ghp_')) {
+        setGhToken(t.trim());
+    } else if (t) {
+        alert('Token invalido. Debe empezar con ghp_');
+    }
+}
 
 function openDB() {
     return new Promise((resolve, reject) => {
@@ -78,13 +171,15 @@ function switchVideoSource(source) {
     document.getElementById('fileSource').style.display = source === 'file' ? 'block' : 'none';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await syncFromCloud();
     renderPeliculas();
     renderSeries();
     renderFavoritos();
     setupEventListeners();
     handleScroll();
     setupAddModal();
+    if (!getGhToken()) promptGithubToken();
 });
 
 function renderPeliculas(filter = 'all') {
@@ -147,6 +242,7 @@ function toggleFavorito(event, id) {
         favoritos.push(id);
     }
     localStorage.setItem('favoritosBlueFlix', JSON.stringify(favoritos));
+    syncToCloud();
     document.querySelectorAll(`[data-id="${id}"] .favorite-btn`).forEach(btn => {
         btn.classList.toggle('active');
     });
@@ -169,6 +265,7 @@ async function deleteContent(event, id) {
         }
         customContent = customContent.filter(c => c.id !== id);
         localStorage.setItem('customBlueFlix', JSON.stringify(customContent));
+        syncToCloud();
         renderPeliculas();
         renderSeries();
         renderFavoritos();
@@ -417,6 +514,7 @@ async function handleFormSubmit(e) {
 
     customContent.push(newItem);
     localStorage.setItem('customBlueFlix', JSON.stringify(customContent));
+    syncToCloud();
     closeAddModal();
     renderPeliculas();
     renderSeries();
@@ -667,6 +765,7 @@ document.addEventListener('DOMContentLoaded', () => {
             footerText: document.getElementById('editFooterText').value || defaultSettings.footerText,
         };
         saveSettings(s);
+        syncToCloud();
         applySettings();
         document.getElementById('editModal').classList.remove('active');
         document.body.style.overflow = 'auto';
@@ -719,6 +818,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.settings) {
                     localStorage.setItem('SteelFlix-OficialSettings', JSON.stringify(data.settings));
                 }
+                syncToCloud();
                 alert('Datos importados correctamente. La pagina se recargara.');
                 location.reload();
             } catch (err) {
