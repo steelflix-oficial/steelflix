@@ -115,6 +115,7 @@ function renderFavoritos() {
 function createCard(item, type) {
     const isFav = favoritos.includes(item.id);
     const badge = type === 'serie' ? '<span class="badge">SERIE</span>' : '';
+    const localBadge = item._hasFile ? '<span class="badge" style="background:#e74c3c;left:auto;right:10px;">LOCAL</span>' : '';
     return `
         <div class="content-card" data-id="${item.id}" data-genero="${item.g}">
             <img src="${item.img}" alt="${item.t}" loading="lazy">
@@ -122,6 +123,7 @@ function createCard(item, type) {
                 <i class="fas fa-heart"></i>
             </button>
             ${badge}
+            ${localBadge}
             <div class="card-overlay">
                 <div class="play-btn"><i class="fas fa-play"></i></div>
                 <h4>${item.t}</h4>
@@ -182,7 +184,7 @@ async function openModal(id) {
             }
             videoPlayer.innerHTML = `<video controls autoplay src="${url}" style="width:100%;height:100%;"></video>`;
         } else {
-            videoPlayer.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#ff6b6b;">Error al cargar el video</div>';
+            videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Este video fue subido como archivo local y solo esta disponible en el dispositivo donde se agrego.</p><p style="font-size:0.9rem;color:#999;">Usa URLs de YouTube para ver el contenido desde cualquier navegador.</p></div>';
         }
     } else if (customItem && customItem.video) {
         const videoId = getYoutubeId(customItem.video);
@@ -245,6 +247,8 @@ async function playEpisode(cap) {
                 fileURLs[cap._fileId] = url;
             }
             videoPlayer.innerHTML = `<video controls autoplay src="${url}" style="width:100%;height:100%;"></video>`;
+        } else {
+            videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Este capitulo fue subido como archivo local y solo esta disponible en el dispositivo donde se agrego.</p></div>';
         }
     } else if (cap.video) {
         const videoId = getYoutubeId(cap.video);
