@@ -64,6 +64,19 @@ async function getVideoBlob(id) {
     });
 }
 
+function getVideoEmbedUrl(url) {
+    if (!url) return null;
+    const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (driveMatch) {
+        return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+    }
+    const driveIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (driveIdMatch && url.includes('drive.google.com')) {
+        return `https://drive.google.com/file/d/${driveIdMatch[1]}/preview`;
+    }
+    return null;
+}
+
 function getYoutubeId(url) {
     if (!url) return null;
     const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
@@ -187,8 +200,11 @@ async function openModal(id) {
     } else if (customItem && customItem.video) {
     } else if (customItem && customItem.video) {
         const videoId = getYoutubeId(customItem.video);
+        const driveUrl = getVideoEmbedUrl(customItem.video);
         if (videoId) {
             videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+        } else if (driveUrl) {
+            videoPlayer.innerHTML = `<iframe src="${driveUrl}" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;"></iframe>`;
         } else {
             videoPlayer.innerHTML = `<video controls autoplay src="${customItem.video}" style="width:100%;height:100%;" onerror="this.innerHTML='<div style=display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;><i class=fas fa-exclamation-triangle style=font-size:2rem;></i><p>Error al cargar el video. Verifica que el enlace sea valido.</p></div>'"></video>`;
         }
@@ -253,8 +269,11 @@ async function playEpisode(cap) {
         }
     } else if (cap.video) {
         const videoId = getYoutubeId(cap.video);
+        const driveUrl = getVideoEmbedUrl(cap.video);
         if (videoId) {
             videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+        } else if (driveUrl) {
+            videoPlayer.innerHTML = `<iframe src="${driveUrl}" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;"></iframe>`;
         } else {
             videoPlayer.innerHTML = `<video controls autoplay src="${cap.video}" style="width:100%;height:100%;" onerror="this.innerHTML='<div style=display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;><p>Error al cargar el video.</p></div>'"></video>`;
         }
