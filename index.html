@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteelFlix - Películas y Series Gratis</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-play-circle" id="logoIcon"></i>
+                <span id="logoText">SteelFlix</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#inicio" class="active" id="navLink1">Inicio</a></li>
+                <li><a href="#peliculas" id="navLink2">Peliculas</a></li>
+                <li><a href="#series" id="navLink3">Series</a></li>
+                <li><a href="#favoritos" id="navLink4">Mis Favoritos</a></li>
+            </ul>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+            <button class="btn-add" id="btnAddNew" title="Agregar contenido">
+                <i class="fas fa-plus"></i> Agregar
+            </button>
+            <button class="btn-edit" id="btnEdit" title="Editar pagina">
+                <i class="fas fa-pen"></i> Editar
+            </button>
+            <div class="export-import-group">
+                <button class="btn-export" id="btnExport" title="Exportar datos">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="btn-export" id="btnImport" title="Importar datos">
+                    <i class="fas fa-upload"></i>
+                </button>
+                <input type="file" id="importFile" accept=".json" style="display:none;">
+            </div>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section id="inicio" class="hero">
+            <div class="hero-content">
+                <h1 id="heroTitle">Películas y Series <span id="heroHighlight">GRATIS</span></h1>
+                <p id="heroDesc">Disfruta del mejor contenido sin costo alguno. Calidad HD y sin anuncios molestos.</p>
+                <button class="btn-primary" id="heroBtn" onclick="scrollToSection('peliculas')">Explorar Ahora</button>
+            </div>
+        </section>
+
+        <section id="peliculas" class="content-section">
+            <div class="section-header">
+                <h2 id="secPelisTitle"><i class="fas fa-film"></i> Películas Populares</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Todas</button>
+                    <button class="filter-btn" data-filter="accion">Acción</button>
+                    <button class="filter-btn" data-filter="comedia">Comedia</button>
+                    <button class="filter-btn" data-filter="drama">Drama</button>
+                    <button class="filter-btn" data-filter="scifi">Sci-Fi</button>
+                    <button class="filter-btn" data-filter="terror">Terror</button>
+                </div>
+            </div>
+            <div class="content-grid" id="peliculasGrid"></div>
+        </section>
+
+        <section id="series" class="content-section">
+            <div class="section-header">
+                <h2 id="secSeriesTitle"><i class="fas fa-tv"></i> Series en Tendencia</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Todas</button>
+                    <button class="filter-btn" data-filter="accion">Acción</button>
+                    <button class="filter-btn" data-filter="comedia">Comedia</button>
+                    <button class="filter-btn" data-filter="drama">Drama</button>
+                    <button class="filter-btn" data-filter="terror">Terror</button>
+                </div>
+            </div>
+            <div class="content-grid" id="seriesGrid">
+            </div>
+        </section>
+
+        <section id="favoritos" class="content-section">
+            <div class="section-header">
+                <h2 id="secFavTitle"><i class="fas fa-heart"></i> Mis Favoritos</h2>
+            </div>
+            <div class="content-grid" id="favoritosGrid">
+                <div class="empty-favorites">
+                    <i class="fas fa-heart-broken"></i>
+                    <p>No tienes favoritos aún. ¡Agrega algunos!</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="videoModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div class="modal-body">
+                <div class="video-container">
+                    <div id="videoPlayer"></div>
+                </div>
+                <div class="video-info">
+                    <h3 id="modalTitle"></h3>
+                    <p id="modalDescription"></p>
+                    <div class="video-meta">
+                        <span id="modalYear"><i class="fas fa-calendar"></i> Ano</span>
+                        <span id="modalRating"><i class="fas fa-star"></i> Rating</span>
+                        <span id="modalDuration"><i class="fas fa-clock"></i> Duracion</span>
+                    </div>
+                    <button class="btn-favorite" id="modalFavorite">
+                        <i class="fas fa-heart"></i> Agregar a Favoritos
+                    </button>
+                    <div id="episodesContainer" class="episodes-container" style="display:none;">
+                        <h4><i class="fas fa-list"></i> Temporadas y Capitulos</h4>
+                        <div id="seasonsTabs" class="seasons-tabs"></div>
+                        <div id="episodesList" class="episodes-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Agregar Contenido -->
+    <div class="modal" id="addModal">
+        <div class="modal-content add-modal">
+            <button class="modal-close" id="closeAddModal">&times;</button>
+            <div class="add-form-container">
+                <h2><i class="fas fa-plus-circle"></i> Agregar Nuevo Contenido</h2>
+                <form id="addForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="addType">Tipo</label>
+                            <select id="addType" required>
+                                <option value="pelicula">Pelicula</option>
+                                <option value="serie">Serie</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="addGenre">Genero</label>
+                            <select id="addGenre" required>
+                                <option value="accion">Accion</option>
+                                <option value="comedia">Comedia</option>
+                                <option value="drama">Drama</option>
+                                <option value="scifi">Sci-Fi</option>
+                                <option value="terror">Terror</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addTitle">Titulo</label>
+                        <input type="text" id="addTitle" placeholder="Ej: Spider-Man" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addImage">URL de Imagen (poster)</label>
+                        <input type="url" id="addImage" placeholder="https://ejemplo.com/imagen.jpg" required>
+                        <small>Pega la URL de una imagen del poster de la pelicula/serie</small>
+                    </div>
+                    <div class="form-group" id="addVideoSection">
+                        <label>Fuente de Video</label>
+                        <div class="video-source-tabs">
+                            <button type="button" class="source-tab active" onclick="switchVideoSource('youtube')">YouTube</button>
+                            <button type="button" class="source-tab" onclick="switchVideoSource('file')">Archivo Local</button>
+                        </div>
+                        <div id="youtubeSource" class="source-content">
+                            <input type="url" id="addVideoUrl" placeholder="https://www.youtube.com/watch?v=...">
+                            <small>Pega el link de YouTube (trailer, capitulo, etc.)</small>
+                        </div>
+                        <div id="fileSource" class="source-content" style="display:none;">
+                            <input type="file" id="addVideoFile" accept="video/mp4,video/webm,video/ogg">
+                            <small>Selecciona un archivo de video desde tu computadora</small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="addYear">Ano</label>
+                            <input type="number" id="addYear" min="1900" max="2030" placeholder="2024" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addRating">Rating</label>
+                            <input type="number" id="addRating" min="0" max="10" step="0.1" placeholder="8.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addDuration">Duracion</label>
+                            <input type="text" id="addDuration" placeholder="2h 15min" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addDesc">Descripcion</label>
+                        <textarea id="addDesc" rows="3" placeholder="Breve descripcion del contenido..." required></textarea>
+                    </div>
+                    <div class="form-group" id="episodeSection" style="display:none;">
+                        <label>Capitulos por Temporada</label>
+                        <div id="seasonsInputs"></div>
+                        <button type="button" class="btn-add-season" id="addSeasonBtn">
+                            <i class="fas fa-plus"></i> Agregar Temporada
+                        </button>
+                    </div>
+                    <p class="form-tip"><i class="fas fa-info-circle"></i> Puedes usar links de YouTube o subir archivos de video (.mp4)</p>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-save"></i> Guardar Contenido
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-play-circle"></i>
+                <span id="footerLogoText">SteelFlix</span>
+            </div>
+            <p id="footerText">&copy; 2026 SteelFlix. Entretenimiento gratuito para todos.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Editar Pagina -->
+    <div class="modal" id="editModal">
+        <div class="modal-content add-modal" style="max-width:700px;">
+            <button class="modal-close" id="closeEditModal">&times;</button>
+            <div class="add-form-container">
+                <h2><i class="fas fa-pen"></i> Editar Pagina</h2>
+                <form id="editForm">
+                    <h3 class="edit-section-title"><i class="fas fa-palette"></i> Apariencia</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Color Primario</label>
+                            <input type="color" id="editColor" value="#1e90ff">
+                        </div>
+                        <div class="form-group">
+                            <label>Fuente</label>
+                            <select id="editFont">
+                                <option value="Poppins">Poppins</option>
+                                <option value="Roboto">Roboto</option>
+                                <option value="Montserrat">Montserrat</option>
+                                <option value="Inter">Inter</option>
+                                <option value="Raleway">Raleway</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3 class="edit-section-title"><i class="fas fa-play-circle"></i> Logo y Nombre</h3>
+                    <div class="form-group">
+                        <label>Nombre del Sitio</label>
+                        <input type="text" id="editSiteName" placeholder="SteelFlix">
+                    </div>
+                    <div class="form-group">
+                        <label>Icono del Logo (Font Awesome class)</label>
+                        <input type="text" id="editLogoIcon" placeholder="fas fa-play-circle">
+                        <small>Ej: fas fa-film, fas fa-clapperboard, fas fa-star</small>
+                    </div>
+
+                    <h3 class="edit-section-title"><i class="fas fa-image"></i> Hero Principal</h3>
+                    <div class="form-group">
+                        <label>Titulo Principal</label>
+                        <input type="text" id="editHeroTitle" placeholder="Peliculas y Series GRATIS">
+                    </div>
+                    <div class="form-group">
+                        <label>Palabra Resaltada (en color)</label>
+                        <input type="text" id="editHeroHighlight" placeholder="GRATIS">
+                    </div>
+                    <div class="form-group">
+                        <label>Descripcion</label>
+                        <textarea id="editHeroDesc" rows="2" placeholder="Disfruta del mejor contenido..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Texto del Boton</label>
+                        <input type="text" id="editHeroBtn" placeholder="Explorar Ahora">
+                    </div>
+                    <div class="form-group">
+                        <label>URL Imagen de Fondo Hero</label>
+                        <input type="url" id="editHeroBg" placeholder="https://images.unsplash.com/photo-...">
+                        <small>Pega la URL de una imagen para el fondo del hero</small>
+                    </div>
+
+                    <h3 class="edit-section-title"><i class="fas fa-bars"></i> Navegacion</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Link 1</label>
+                            <input type="text" id="editNav1" placeholder="Inicio">
+                        </div>
+                        <div class="form-group">
+                            <label>Link 2</label>
+                            <input type="text" id="editNav2" placeholder="Peliculas">
+                        </div>
+                        <div class="form-group">
+                            <label>Link 3</label>
+                            <input type="text" id="editNav3" placeholder="Series">
+                        </div>
+                        <div class="form-group">
+                            <label>Link 4</label>
+                            <input type="text" id="editNav4" placeholder="Mis Favoritos">
+                        </div>
+                    </div>
+
+                    <h3 class="edit-section-title"><i class="fas fa-layer-group"></i> Titulos de Seccion</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Seccion Peliculas</label>
+                            <input type="text" id="editSecPelis" placeholder="Peliculas Populares">
+                        </div>
+                        <div class="form-group">
+                            <label>Seccion Series</label>
+                            <input type="text" id="editSecSeries" placeholder="Series en Tendencia">
+                        </div>
+                        <div class="form-group">
+                            <label>Seccion Favoritos</label>
+                            <input type="text" id="editSecFav" placeholder="Mis Favoritos">
+                        </div>
+                    </div>
+
+                    <h3 class="edit-section-title"><i class="fas fa-shoe-prints"></i> Footer</h3>
+                    <div class="form-group">
+                        <label>Texto del Footer</label>
+                        <input type="text" id="editFooterText" placeholder="2026 SteelFlix. Entretenimiento gratuito para todos.">
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                    <button type="button" class="btn-submit" id="btnResetEdit" style="background:linear-gradient(135deg,#ff4757,#ff6b81);margin-top:0.5rem;">
+                        <i class="fas fa-undo"></i> Restablecer Por Defecto
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
