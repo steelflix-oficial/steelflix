@@ -1,0 +1,17 @@
+{
+    "name": "SteelFlix-Oficial",
+    "short_name": "SteelFlix",
+    "description": "Peliculas y series gratis en HD. Calidad superior, sin anuncios, reproduccion fluida.",
+    "start_url": "https://steelflix-oficial.github.io/steelflix/",
+    "display": "standalone",
+    "background_color": "#141414",
+    "theme_color": "#1e90ff",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ðŸŽ¬</text></svg>",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}
