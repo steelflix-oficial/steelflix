@@ -1,18 +1,5 @@
 {
-  "customContent": [
-    {
-      "id": 1784924067787,
-      "t": "From",
-      "img": "https://cinepop.com.br/wp-content/uploads/2023/01/from-epix-1024x683.jpg",
-      "y": 2022,
-      "r": "8.1",
-      "d": "45 min",
-      "g": "terror",
-      "desc": "Terror",
-      "tipo": "pelicula",
-      "video": "https://youtu.be/a5uQMwRMHcs?si=hDFng5ExUm_u8yPf"
-    }
-  ],
+  "customContent": [],
   "favoritos": [],
   "settings": {
     "siteName": "SteelFlix-Oficial",
