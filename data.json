@@ -14,5 +14,25 @@
     }
   ],
   "favoritos": [],
-  "settings": null
+  "settings": {
+    "siteName": "SteelFlix-Oficial",
+    "logoIcon": "fas fa-play-circle",
+    "primaryColor": "#1e90ff",
+    "font": "Poppins",
+    "heroTitle": "Películas y Series",
+    "heroHighlight": "GRATIS",
+    "heroDesc": "Disfruta del mejor contenido sin costo alguno. Calidad HD y sin anuncios molestos.",
+    "heroBtn": "Explorar Ahora",
+    "heroBg": "",
+    "nav1": "Inicio",
+    "nav2": "Peliculas",
+    "nav3": "Series",
+    "nav4": "Mis Favoritos",
+    "secPelis": "Peliculas Populares",
+    "secSeries": "Series en Tendencia",
+    "secFav": "Mis Favoritos",
+    "footerText": "2026 SteelFlix-Oficial. Entretenimiento gratuito para todos.",
+    "cloudName": "khuuy19i",
+    "uploadPreset": "SteelFlix-Oficial"
+  }
 }
