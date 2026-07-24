@@ -1,3 +1,9 @@
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -23,6 +29,23 @@ body {
         radial-gradient(ellipse at 90% 80%, rgba(0,212,255,0.02) 0%, transparent 50%);
     color: var(--text-white);
     line-height: 1.6;
+    overflow-x: hidden;
+    will-change: transform;
+}
+
+img, video, iframe {
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.content-card {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+    will-change: transform;
+}
+
+.content-card:hover {
+    transform: translateY(-8px) scale(1.03);
 }
 
 /* Navbar */
@@ -542,6 +565,7 @@ body {
     background: #000;
     border-radius: 10px;
     overflow: hidden;
+    contain: layout paint;
 }
 
 #videoPlayer {
