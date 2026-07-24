@@ -312,6 +312,8 @@ async function openModal(id) {
         const videoId = getYoutubeId(customItem.video);
         if (videoId) {
             videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+        } else {
+            videoPlayer.innerHTML = `<video controls autoplay src="${customItem.video}" style="width:100%;height:100%;" onerror="this.innerHTML='<div style=display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;><i class=fas fa-exclamation-triangle style=font-size:2rem;></i><p>Error al cargar el video. Verifica que el enlace sea valido.</p></div>'"></video>`;
         }
     } else if (customItem && customItem.temporadas && customItem.temporadas.length > 0) {
         episodesContainer.style.display = 'block';
@@ -377,7 +379,7 @@ async function playEpisode(cap) {
         if (videoId) {
             videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
         } else {
-            videoPlayer.innerHTML = `<video controls autoplay src="${cap.video}" style="width:100%;height:100%;"></video>`;
+            videoPlayer.innerHTML = `<video controls autoplay src="${cap.video}" style="width:100%;height:100%;" onerror="this.innerHTML='<div style=display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;><p>Error al cargar el video.</p></div>'"></video>`;
         }
     }
     videoPlayer.scrollIntoView({ behavior: 'smooth' });
@@ -493,8 +495,8 @@ async function handleFormSubmit(e) {
     if (tipo === 'pelicula') {
         if (currentVideoSource === 'youtube') {
             const videoUrl = document.getElementById('addVideoUrl').value;
-            if (!videoUrl || !getYoutubeId(videoUrl)) {
-                alert('Pega una URL valida de YouTube');
+            if (!videoUrl) {
+                alert('Pega una URL de video valida');
                 return;
             }
             newItem.video = videoUrl;
