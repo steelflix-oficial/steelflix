@@ -1,4 +1,4 @@
-const peliculas = [];
+﻿const peliculas = [];
 
 const series = [];
 
@@ -311,7 +311,7 @@ function scrollToSection(sectionId) {
 
 // ===== APPLY SETTINGS + IMPORT =====
 function loadSettings() {
-    return JSON.parse(localStorage.getItem('steelFlixSettings')) || {};
+    return JSON.parse(localStorage.getItem('SteelFlix-OficialSettings')) || {};
 }
 
 function applySettings() {
@@ -339,7 +339,7 @@ function applySettings() {
         document.title = s.siteName + ' - Peliculas y Series Gratis';
     }
     if (s.siteName) document.getElementById('footerLogoText').textContent = s.siteName;
-    if (s.footerText) document.getElementById('footerText').innerHTML = `&copy; ${new Date().getFullYear()} ${s.siteName||'SteelFlix'}. ${s.footerText}`;
+    if (s.footerText) document.getElementById('footerText').innerHTML = `&copy; ${new Date().getFullYear()} ${s.siteName||'SteelFlix-Oficial'}. ${s.footerText}`;
     if (s.heroTitle) document.getElementById('heroTitle').innerHTML = `${s.heroTitle} <span id="heroHighlight">${s.heroHighlight||''}</span>`;
     if (s.heroDesc) document.getElementById('heroDesc').textContent = s.heroDesc;
     if (s.heroBtn) document.getElementById('heroBtn').textContent = s.heroBtn;
