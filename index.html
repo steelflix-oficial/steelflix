@@ -165,12 +165,12 @@
                     <div class="form-group" id="addVideoSection">
                         <label>Fuente de Video</label>
                         <div class="video-source-tabs">
-                            <button type="button" class="source-tab active" onclick="switchVideoSource('youtube')">YouTube</button>
+                            <button type="button" class="source-tab active" onclick="switchVideoSource('youtube')">URL de Video</button>
                             <button type="button" class="source-tab" onclick="switchVideoSource('file')">Archivo Local</button>
                         </div>
                         <div id="youtubeSource" class="source-content">
-                            <input type="url" id="addVideoUrl" placeholder="https://www.youtube.com/watch?v=...">
-                            <small>Pega el link de YouTube (trailer, capitulo, etc.)</small>
+                            <input type="url" id="addVideoUrl" placeholder="URL del video (YouTube, MP4, Google Drive, etc.)">
+                            <small>Pega cualquier enlace de video (YouTube, enlace directo .mp4, Google Drive, etc.)</small>
                         </div>
                         <div id="fileSource" class="source-content" style="display:none;">
                             <input type="file" id="addVideoFile" accept="video/mp4,video/webm,video/ogg">
@@ -202,7 +202,7 @@
                             <i class="fas fa-plus"></i> Agregar Temporada
                         </button>
                     </div>
-                    <p class="form-tip"><i class="fas fa-info-circle"></i> Puedes usar links de YouTube o subir archivos de video (.mp4)</p>
+                    <p class="form-tip"><i class="fas fa-info-circle"></i> Puedes usar links de YouTube, enlaces directos de video (.mp4), o subir archivos locales</p>
                     <button type="submit" class="btn-submit">
                         <i class="fas fa-save"></i> Guardar Contenido
                     </button>
