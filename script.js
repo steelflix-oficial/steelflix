@@ -213,6 +213,7 @@ function createCard(item, type) {
     const isFav = favoritos.includes(item.id);
     const isCustom = customContent.some(c => c.id === item.id);
     const badge = type === 'serie' ? '<span class="badge">SERIE</span>' : '';
+    const localBadge = item._hasFile ? '<span class="badge" style="background:#e74c3c;left:auto;right:10px;">LOCAL</span>' : '';
     const deleteBtn = isCustom ? `<button class="btn-delete" onclick="deleteContent(event, ${item.id})" title="Eliminar"><i class="fas fa-trash"></i></button>` : '';
     return `
         <div class="content-card" data-id="${item.id}" data-genero="${item.g}">
@@ -222,6 +223,7 @@ function createCard(item, type) {
                 <i class="fas fa-heart"></i>
             </button>
             ${badge}
+            ${localBadge}
             <div class="card-overlay">
                 <div class="play-btn"><i class="fas fa-play"></i></div>
                 <h4>${item.t}</h4>
@@ -306,7 +308,7 @@ async function openModal(id) {
             }
             videoPlayer.innerHTML = `<video controls autoplay src="${url}" style="width:100%;height:100%;"></video>`;
         } else {
-            videoPlayer.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#ff6b6b;">Error al cargar el video</div>';
+            videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Error al cargar el video local.</p></div>';
         }
     } else if (customItem && customItem.video) {
         const videoId = getYoutubeId(customItem.video);
@@ -498,6 +500,9 @@ async function handleFormSubmit(e) {
             const videoFile = document.getElementById('addVideoFile').files[0];
             if (!videoFile) {
                 alert('Selecciona un archivo de video');
+                return;
+            }
+            if (!confirm('Archivo local: este video SOLO funcionara en este navegador. Si quieres que funcione en otros dispositivos, usa una URL de YouTube.\n\nContinuar de todas formas?')) {
                 return;
             }
             const blob = await readFileAsBlob(videoFile);
