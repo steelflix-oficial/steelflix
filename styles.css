@@ -555,6 +555,7 @@ body {
     height: 100%;
     border: none;
     background: #000;
+    object-fit: contain;
 }
 
 .form-tip {
