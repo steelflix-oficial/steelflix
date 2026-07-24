@@ -198,7 +198,6 @@ async function openModal(id) {
             videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Video no encontrado. Re-subelo desde el admin.</p></div>';
         }
     } else if (customItem && customItem.video) {
-    } else if (customItem && customItem.video) {
         const videoId = getYoutubeId(customItem.video);
         const driveUrl = getVideoEmbedUrl(customItem.video);
         if (videoId) {
@@ -409,4 +408,36 @@ function applySettings() {
 
 document.addEventListener('DOMContentLoaded', () => {
     applySettings();
+
+    document.getElementById('btnViewSettings').addEventListener('click', () => {
+        const s = loadSettings();
+        document.getElementById('viewColor').value = s.primaryColor || '#1e90ff';
+        document.getElementById('viewFont').value = s.font || 'Poppins';
+        document.getElementById('viewSiteName').value = s.siteName || '';
+        document.getElementById('settingsModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    document.getElementById('closeSettingsModal').addEventListener('click', () => {
+        document.getElementById('settingsModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    });
+
+    document.getElementById('settingsModal').addEventListener('click', (e) => {
+        if (e.target.id === 'settingsModal') {
+            document.getElementById('settingsModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    });
+
+    document.getElementById('btnSaveViewSettings').addEventListener('click', () => {
+        const s = loadSettings();
+        s.primaryColor = document.getElementById('viewColor').value;
+        s.font = document.getElementById('viewFont').value;
+        s.siteName = document.getElementById('viewSiteName').value || s.siteName;
+        localStorage.setItem('SteelFlix-OficialSettings', JSON.stringify(s));
+        applySettings();
+        document.getElementById('settingsModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    });
 });
