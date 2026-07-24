@@ -1,4 +1,4 @@
-const peliculas = [];
+﻿const peliculas = [];
 
 const series = [];
 
@@ -542,7 +542,7 @@ async function collectTemporadas() {
 
 // ===== EDIT PAGE SYSTEM =====
 const defaultSettings = {
-    siteName: 'SteelFlix',
+    siteName: 'SteelFlix-Oficial',
     logoIcon: 'fas fa-play-circle',
     primaryColor: '#1e90ff',
     font: 'Poppins',
@@ -553,15 +553,15 @@ const defaultSettings = {
     heroBg: '',
     nav1: 'Inicio', nav2: 'Peliculas', nav3: 'Series', nav4: 'Mis Favoritos',
     secPelis: 'Peliculas Populares', secSeries: 'Series en Tendencia', secFav: 'Mis Favoritos',
-    footerText: '2026 SteelFlix. Entretenimiento gratuito para todos.'
+    footerText: '2026 SteelFlix-Oficial. Entretenimiento gratuito para todos.'
 };
 
 function loadSettings() {
-    return JSON.parse(localStorage.getItem('steelFlixSettings')) || { ...defaultSettings };
+    return JSON.parse(localStorage.getItem('SteelFlix-OficialSettings')) || { ...defaultSettings };
 }
 
 function saveSettings(s) {
-    localStorage.setItem('steelFlixSettings', JSON.stringify(s));
+    localStorage.setItem('SteelFlix-OficialSettings', JSON.stringify(s));
 }
 
 function applySettings() {
@@ -674,7 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btnResetEdit').addEventListener('click', () => {
         if (confirm('Restablecer toda la configuracion por defecto?')) {
-            localStorage.removeItem('steelFlixSettings');
+            localStorage.removeItem('SteelFlix-OficialSettings');
             applySettings();
             document.getElementById('editModal').classList.remove('active');
             document.body.style.overflow = 'auto';
@@ -686,14 +686,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = {
             customContent: JSON.parse(localStorage.getItem('customBlueFlix')) || [],
             favoritos: JSON.parse(localStorage.getItem('favoritosBlueFlix')) || [],
-            settings: JSON.parse(localStorage.getItem('steelFlixSettings')) || null,
+            settings: JSON.parse(localStorage.getItem('SteelFlix-OficialSettings')) || null,
             exportDate: new Date().toISOString()
         };
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `steelflix-backup-${new Date().toISOString().slice(0,10)}.json`;
+        a.download = `SteelFlix-Oficial-backup-${new Date().toISOString().slice(0,10)}.json`;
         a.click();
         URL.revokeObjectURL(url);
     });
@@ -717,12 +717,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('favoritosBlueFlix', JSON.stringify(data.favoritos));
                 }
                 if (data.settings) {
-                    localStorage.setItem('steelFlixSettings', JSON.stringify(data.settings));
+                    localStorage.setItem('SteelFlix-OficialSettings', JSON.stringify(data.settings));
                 }
                 alert('Datos importados correctamente. La pagina se recargara.');
                 location.reload();
             } catch (err) {
-                alert('Error al leer el archivo. Asegurate de que sea un archivo JSON de SteelFlix.');
+                alert('Error al leer el archivo. Asegurate de que sea un archivo JSON de SteelFlix-Oficial.');
             }
         };
         reader.readAsText(file);
