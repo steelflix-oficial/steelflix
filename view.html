@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -142,7 +142,38 @@
         </div>
     </footer>
 
-    <div class="view-badge"><i class="fas fa-eye"></i> Modo solo lectura</div>
+    <div class="view-badge" id="btnViewSettings" style="cursor:pointer;"><i class="fas fa-cog"></i> Ajustes</div>
+
+    <!-- Modal Ajustes Vista -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content add-modal" style="max-width:500px;">
+            <button class="modal-close" id="closeSettingsModal">&times;</button>
+            <div class="add-form-container">
+                <h2><i class="fas fa-cog"></i> Ajustes de Visualizacion</h2>
+                <div class="form-group">
+                    <label>Color Primario</label>
+                    <input type="color" id="viewColor" value="#1e90ff">
+                </div>
+                <div class="form-group">
+                    <label>Fuente</label>
+                    <select id="viewFont">
+                        <option value="Poppins">Poppins</option>
+                        <option value="Roboto">Roboto</option>
+                        <option value="Montserrat">Montserrat</option>
+                        <option value="Inter">Inter</option>
+                        <option value="Raleway">Raleway</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nombre del Sitio</label>
+                    <input type="text" id="viewSiteName" placeholder="SteelFlix-Oficial">
+                </div>
+                <button class="btn-submit" id="btnSaveViewSettings">
+                    <i class="fas fa-save"></i> Guardar Ajustes
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="view.js"></script>
 </body>
