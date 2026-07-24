@@ -1,7 +1,6 @@
-﻿const peliculas = [];
+const peliculas = [];
 
 const series = [];
-
 
 let favoritos = JSON.parse(localStorage.getItem('favoritosBlueFlix')) || [];
 let customContent = JSON.parse(localStorage.getItem('customBlueFlix')) || [];
@@ -12,6 +11,34 @@ const fileURLs = {};
 const DB_NAME = 'BlueFlixDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'videos';
+
+const GH_RAW = 'https://raw.githubusercontent.com/steelflix-oficial/steelflix/main/data.json';
+
+async function loadFromGitHub() {
+    try {
+        const res = await fetch(GH_RAW + '?t=' + Date.now());
+        if (!res.ok) return null;
+        return await res.json();
+    } catch (e) {
+        return null;
+    }
+}
+
+async function syncFromCloud() {
+    const data = await loadFromGitHub();
+    if (!data) return;
+    if (data.customContent && data.customContent.length > 0) {
+        customContent = data.customContent;
+        localStorage.setItem('customBlueFlix', JSON.stringify(customContent));
+    }
+    if (data.favoritos) {
+        favoritos = data.favoritos;
+        localStorage.setItem('favoritosBlueFlix', JSON.stringify(favoritos));
+    }
+    if (data.settings) {
+        localStorage.setItem('SteelFlix-OficialSettings', JSON.stringify(data.settings));
+    }
+}
 
 function openDB() {
     return new Promise((resolve, reject) => {
@@ -49,7 +76,8 @@ function getAllContent() {
     return [...peliculas, ...series, ...customPelis, ...customSeries];
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await syncFromCloud();
     renderPeliculas();
     renderSeries();
     renderFavoritos();
