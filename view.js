@@ -115,7 +115,6 @@ function renderFavoritos() {
 function createCard(item, type) {
     const isFav = favoritos.includes(item.id);
     const badge = type === 'serie' ? '<span class="badge">SERIE</span>' : '';
-    const localBadge = item._hasFile ? '<span class="badge" style="background:#e74c3c;left:auto;right:10px;">LOCAL</span>' : '';
     return `
         <div class="content-card" data-id="${item.id}" data-genero="${item.g}">
             <img src="${item.img}" alt="${item.t}" loading="lazy">
@@ -123,7 +122,6 @@ function createCard(item, type) {
                 <i class="fas fa-heart"></i>
             </button>
             ${badge}
-            ${localBadge}
             <div class="card-overlay">
                 <div class="play-btn"><i class="fas fa-play"></i></div>
                 <h4>${item.t}</h4>
@@ -174,7 +172,7 @@ async function openModal(id) {
 
     const customItem = customContent.find(c => c.id === id);
 
-    if (customItem && customItem._hasFile) {
+    if (customItem && customItem._hasFile && !customItem.video) {
         const blob = await getVideoBlob(id);
         if (blob) {
             let url = fileURLs[id];
@@ -184,8 +182,9 @@ async function openModal(id) {
             }
             videoPlayer.innerHTML = `<video controls autoplay src="${url}" style="width:100%;height:100%;"></video>`;
         } else {
-            videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Este video fue subido como archivo local y solo esta disponible en el dispositivo donde se agrego.</p><p style="font-size:0.9rem;color:#999;">Usa URLs de YouTube para ver el contenido desde cualquier navegador.</p></div>';
+            videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Video no encontrado. Re-subelo desde el admin.</p></div>';
         }
+    } else if (customItem && customItem.video) {
     } else if (customItem && customItem.video) {
         const videoId = getYoutubeId(customItem.video);
         if (videoId) {
@@ -238,7 +237,7 @@ function renderEpisodes(temporada) {
 async function playEpisode(cap) {
     const videoPlayer = document.getElementById('videoPlayer');
 
-    if (cap._hasFile) {
+    if (cap._hasFile && !cap.video) {
         const blob = await getVideoBlob(cap._fileId);
         if (blob) {
             let url = fileURLs[cap._fileId];
@@ -248,12 +247,14 @@ async function playEpisode(cap) {
             }
             videoPlayer.innerHTML = `<video controls autoplay src="${url}" style="width:100%;height:100%;"></video>`;
         } else {
-            videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Este capitulo fue subido como archivo local y solo esta disponible en el dispositivo donde se agrego.</p></div>';
+            videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Capitulo no encontrado.</p></div>';
         }
     } else if (cap.video) {
         const videoId = getYoutubeId(cap.video);
         if (videoId) {
             videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+        } else {
+            videoPlayer.innerHTML = `<video controls autoplay src="${cap.video}" style="width:100%;height:100%;"></video>`;
         }
     }
     videoPlayer.scrollIntoView({ behavior: 'smooth' });
