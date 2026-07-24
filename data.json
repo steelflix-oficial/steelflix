@@ -1,5 +1,18 @@
 {
-  "customContent": [],
+  "customContent": [
+    {
+      "id": 1784935658908,
+      "t": "From",
+      "img": "https://miro.medium.com/v2/resize:fit:1400/1*39M4XbHXCTfBenNNqLLyLA@2x.jpeg",
+      "y": 2022,
+      "r": "8.1",
+      "d": "45 min",
+      "g": "terror",
+      "desc": "Terror",
+      "tipo": "pelicula",
+      "video": "https://www.zona-leros.com/series/episode/from-1-1-h"
+    }
+  ],
   "favoritos": [],
   "settings": {
     "siteName": "SteelFlix-Oficial",
