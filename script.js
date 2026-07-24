@@ -317,7 +317,7 @@ async function openModal(id) {
                 url = URL.createObjectURL(blob);
                 fileURLs[id] = url;
             }
-            videoPlayer.innerHTML = `<video controls autoplay src="${url}" style="width:100%;height:100%;"></video>`;
+            videoPlayer.innerHTML = `<video controls autoplay playsinline preload="auto" crossOrigin="anonymous" src="${url}" style="width:100%;height:100%;object-fit:contain;"></video>`;
         } else {
             videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Video no encontrado. Re-subelo usando Cloudinary.</p></div>';
         }
@@ -325,11 +325,11 @@ async function openModal(id) {
         const videoId = getYoutubeId(customItem.video);
         const driveUrl = getVideoEmbedUrl(customItem.video);
         if (videoId) {
-            videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+            videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&vq=hd720&hd=1" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;"></iframe>`;
         } else if (driveUrl) {
             videoPlayer.innerHTML = `<iframe src="${driveUrl}" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;"></iframe>`;
         } else {
-            videoPlayer.innerHTML = `<video controls autoplay src="${customItem.video}" style="width:100%;height:100%;" onerror="this.innerHTML='<div style=display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;><i class=fas fa-exclamation-triangle style=font-size:2rem;></i><p>Error al cargar el video. Verifica que el enlace sea valido.</p></div>'"></video>`;
+            videoPlayer.innerHTML = `<video controls autoplay playsinline preload="auto" crossOrigin="anonymous" src="${customItem.video}" style="width:100%;height:100%;object-fit:contain;" onerror="this.innerHTML='<div style=display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;><i class=fas fa-exclamation-triangle style=font-size:2rem;></i><p>Error al cargar el video. Verifica que el enlace sea valido.</p></div>'"></video>`;
         }
     } else if (customItem && customItem.temporadas && customItem.temporadas.length > 0) {
         episodesContainer.style.display = 'block';
@@ -386,7 +386,7 @@ async function playEpisode(cap) {
                 url = URL.createObjectURL(blob);
                 fileURLs[cap._fileId] = url;
             }
-            videoPlayer.innerHTML = `<video controls autoplay src="${url}" style="width:100%;height:100%;"></video>`;
+            videoPlayer.innerHTML = `<video controls autoplay playsinline preload="auto" crossOrigin="anonymous" src="${url}" style="width:100%;height:100%;object-fit:contain;"></video>`;
         } else {
             videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Capitulo no encontrado.</p></div>';
         }
@@ -394,11 +394,11 @@ async function playEpisode(cap) {
         const videoId = getYoutubeId(cap.video);
         const driveUrl = getVideoEmbedUrl(cap.video);
         if (videoId) {
-            videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+            videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&vq=hd720&hd=1" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;"></iframe>`;
         } else if (driveUrl) {
             videoPlayer.innerHTML = `<iframe src="${driveUrl}" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;"></iframe>`;
         } else {
-            videoPlayer.innerHTML = `<video controls autoplay src="${cap.video}" style="width:100%;height:100%;" onerror="this.innerHTML='<div style=display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;><p>Error al cargar el video.</p></div>'"></video>`;
+            videoPlayer.innerHTML = `<video controls autoplay playsinline preload="auto" crossOrigin="anonymous" src="${cap.video}" style="width:100%;height:100%;object-fit:contain;" onerror="this.innerHTML='<div style=display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;><p>Error al cargar el video.</p></div>'"></video>`;
         }
     }
     videoPlayer.scrollIntoView({ behavior: 'smooth' });
