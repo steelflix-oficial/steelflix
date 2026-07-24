@@ -213,7 +213,6 @@ function createCard(item, type) {
     const isFav = favoritos.includes(item.id);
     const isCustom = customContent.some(c => c.id === item.id);
     const badge = type === 'serie' ? '<span class="badge">SERIE</span>' : '';
-    const localBadge = item._hasFile ? '<span class="badge" style="background:#e74c3c;left:auto;right:10px;">LOCAL</span>' : '';
     const deleteBtn = isCustom ? `<button class="btn-delete" onclick="deleteContent(event, ${item.id})" title="Eliminar"><i class="fas fa-trash"></i></button>` : '';
     return `
         <div class="content-card" data-id="${item.id}" data-genero="${item.g}">
@@ -223,7 +222,6 @@ function createCard(item, type) {
                 <i class="fas fa-heart"></i>
             </button>
             ${badge}
-            ${localBadge}
             <div class="card-overlay">
                 <div class="play-btn"><i class="fas fa-play"></i></div>
                 <h4>${item.t}</h4>
@@ -298,7 +296,7 @@ async function openModal(id) {
 
     const customItem = customContent.find(c => c.id === id);
 
-    if (customItem && customItem._hasFile) {
+    if (customItem && customItem._hasFile && !customItem.video) {
         const blob = await getVideoBlob(id);
         if (blob) {
             let url = fileURLs[id];
@@ -308,7 +306,7 @@ async function openModal(id) {
             }
             videoPlayer.innerHTML = `<video controls autoplay src="${url}" style="width:100%;height:100%;"></video>`;
         } else {
-            videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Error al cargar el video local.</p></div>';
+            videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Video no encontrado. Re-subelo usando Cloudinary.</p></div>';
         }
     } else if (customItem && customItem.video) {
         const videoId = getYoutubeId(customItem.video);
@@ -362,7 +360,7 @@ function renderEpisodes(temporada) {
 async function playEpisode(cap) {
     const videoPlayer = document.getElementById('videoPlayer');
 
-    if (cap._hasFile) {
+    if (cap._hasFile && !cap.video) {
         const blob = await getVideoBlob(cap._fileId);
         if (blob) {
             let url = fileURLs[cap._fileId];
@@ -371,11 +369,15 @@ async function playEpisode(cap) {
                 fileURLs[cap._fileId] = url;
             }
             videoPlayer.innerHTML = `<video controls autoplay src="${url}" style="width:100%;height:100%;"></video>`;
+        } else {
+            videoPlayer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#ff6b6b;gap:10px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><p style="font-size:1.1rem;">Capitulo no encontrado.</p></div>';
         }
     } else if (cap.video) {
         const videoId = getYoutubeId(cap.video);
         if (videoId) {
             videoPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+        } else {
+            videoPlayer.innerHTML = `<video controls autoplay src="${cap.video}" style="width:100%;height:100%;"></video>`;
         }
     }
     videoPlayer.scrollIntoView({ behavior: 'smooth' });
@@ -502,12 +504,9 @@ async function handleFormSubmit(e) {
                 alert('Selecciona un archivo de video');
                 return;
             }
-            if (!confirm('Archivo local: este video SOLO funcionara en este navegador. Si quieres que funcione en otros dispositivos, usa una URL de YouTube.\n\nContinuar de todas formas?')) {
-                return;
-            }
-            const blob = await readFileAsBlob(videoFile);
-            await saveVideoBlob(newId, blob);
-            newItem._hasFile = true;
+            const cloudUrl = await uploadToCloudinary(videoFile);
+            if (!cloudUrl) return;
+            newItem.video = cloudUrl;
         }
     } else {
         newItem.temporadas = await collectTemporadas();
@@ -533,6 +532,29 @@ function readFileAsBlob(file) {
         reader.onerror = (e) => reject(e.target.error);
         reader.readAsArrayBuffer(file);
     });
+}
+
+async function uploadToCloudinary(file) {
+    const s = loadSettings();
+    if (!s.cloudName || !s.uploadPreset) {
+        alert('Configura Cloudinary en Editar Pagina > Cloudinary antes de subir archivos.\n\nCrea una cuenta gratis en cloudinary.com');
+        return null;
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', s.uploadPreset);
+    try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${s.cloudName}/video/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        if (!res.ok) throw new Error('Upload failed');
+        const data = await res.json();
+        return data.secure_url;
+    } catch (e) {
+        alert('Error al subir video a Cloudinary: ' + e.message);
+        return null;
+    }
 }
 
 function addSeasonInput() {
@@ -598,10 +620,10 @@ async function collectTemporadas() {
             if (isFile) {
                 const file = epGroup.querySelector('.ep-video-file').files[0];
                 if (nombre && file) {
-                    const fileId = Date.now() + Math.random();
-                    const blob = await readFileAsBlob(file);
-                    await saveVideoBlob(fileId, blob);
-                    episodios.push({ nombre, _hasFile: true, _fileId: fileId });
+                    const cloudUrl = await uploadToCloudinary(file);
+                    if (cloudUrl) {
+                        episodios.push({ nombre, video: cloudUrl });
+                    }
                 }
             } else {
                 const url = epGroup.querySelector('.ep-video-url').value;
@@ -656,7 +678,9 @@ const defaultSettings = {
     heroBg: '',
     nav1: 'Inicio', nav2: 'Peliculas', nav3: 'Series', nav4: 'Mis Favoritos',
     secPelis: 'Peliculas Populares', secSeries: 'Series en Tendencia', secFav: 'Mis Favoritos',
-    footerText: '2026 SteelFlix-Oficial. Entretenimiento gratuito para todos.'
+    footerText: '2026 SteelFlix-Oficial. Entretenimiento gratuito para todos.',
+    cloudName: '',
+    uploadPreset: ''
 };
 
 function loadSettings() {
@@ -729,6 +753,8 @@ function openEditModal() {
     document.getElementById('editSecSeries').value = s.secSeries;
     document.getElementById('editSecFav').value = s.secFav;
     document.getElementById('editFooterText').value = s.footerText;
+    document.getElementById('editCloudName').value = s.cloudName || '';
+    document.getElementById('editUploadPreset').value = s.uploadPreset || '';
     document.getElementById('editModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -768,6 +794,8 @@ document.addEventListener('DOMContentLoaded', () => {
             secSeries: document.getElementById('editSecSeries').value || defaultSettings.secSeries,
             secFav: document.getElementById('editSecFav').value || defaultSettings.secFav,
             footerText: document.getElementById('editFooterText').value || defaultSettings.footerText,
+            cloudName: document.getElementById('editCloudName').value || '',
+            uploadPreset: document.getElementById('editUploadPreset').value || '',
         };
         saveSettings(s);
         syncToCloud();
