@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteelFlix - Películas y Series Gratis</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .view-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(30,144,255,0.15);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            z-index: 500;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-play-circle" id="logoIcon"></i>
+                <span id="logoText">SteelFlix</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#inicio" class="active" id="navLink1">Inicio</a></li>
+                <li><a href="#peliculas" id="navLink2">Peliculas</a></li>
+                <li><a href="#series" id="navLink3">Series</a></li>
+                <li><a href="#favoritos" id="navLink4">Mis Favoritos</a></li>
+            </ul>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section id="inicio" class="hero">
+            <div class="hero-content">
+                <h1 id="heroTitle">Películas y Series <span id="heroHighlight">GRATIS</span></h1>
+                <p id="heroDesc">Disfruta del mejor contenido sin costo alguno. Calidad HD y sin anuncios molestos.</p>
+                <button class="btn-primary" id="heroBtn" onclick="scrollToSection('peliculas')">Explorar Ahora</button>
+            </div>
+        </section>
+
+        <section id="peliculas" class="content-section">
+            <div class="section-header">
+                <h2 id="secPelisTitle"><i class="fas fa-film"></i> Películas Populares</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Todas</button>
+                    <button class="filter-btn" data-filter="accion">Acción</button>
+                    <button class="filter-btn" data-filter="comedia">Comedia</button>
+                    <button class="filter-btn" data-filter="drama">Drama</button>
+                    <button class="filter-btn" data-filter="scifi">Sci-Fi</button>
+                    <button class="filter-btn" data-filter="terror">Terror</button>
+                </div>
+            </div>
+            <div class="content-grid" id="peliculasGrid"></div>
+        </section>
+
+        <section id="series" class="content-section">
+            <div class="section-header">
+                <h2 id="secSeriesTitle"><i class="fas fa-tv"></i> Series en Tendencia</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Todas</button>
+                    <button class="filter-btn" data-filter="accion">Acción</button>
+                    <button class="filter-btn" data-filter="comedia">Comedia</button>
+                    <button class="filter-btn" data-filter="drama">Drama</button>
+                    <button class="filter-btn" data-filter="terror">Terror</button>
+                </div>
+            </div>
+            <div class="content-grid" id="seriesGrid"></div>
+        </section>
+
+        <section id="favoritos" class="content-section">
+            <div class="section-header">
+                <h2 id="secFavTitle"><i class="fas fa-heart"></i> Mis Favoritos</h2>
+            </div>
+            <div class="content-grid" id="favoritosGrid">
+                <div class="empty-favorites">
+                    <i class="fas fa-heart-broken"></i>
+                    <p>No tienes favoritos aún. ¡Agrega algunos!</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="videoModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div class="modal-body">
+                <div class="video-container">
+                    <div id="videoPlayer"></div>
+                </div>
+                <div class="video-info">
+                    <h3 id="modalTitle"></h3>
+                    <p id="modalDescription"></p>
+                    <div class="video-meta">
+                        <span id="modalYear"><i class="fas fa-calendar"></i> Año</span>
+                        <span id="modalRating"><i class="fas fa-star"></i> Rating</span>
+                        <span id="modalDuration"><i class="fas fa-clock"></i> Duración</span>
+                    </div>
+                    <button class="btn-favorite" id="modalFavorite">
+                        <i class="fas fa-heart"></i> Agregar a Favoritos
+                    </button>
+                    <div id="episodesContainer" class="episodes-container" style="display:none;">
+                        <h4><i class="fas fa-list"></i> Temporadas y Capítulos</h4>
+                        <div id="seasonsTabs" class="seasons-tabs"></div>
+                        <div id="episodesList" class="episodes-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-play-circle"></i>
+                <span id="footerLogoText">SteelFlix</span>
+            </div>
+            <p id="footerText">&copy; 2026 SteelFlix. Entretenimiento gratuito para todos.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="view-badge"><i class="fas fa-eye"></i> Modo solo lectura</div>
+
+    <script src="view.js"></script>
+</body>
+</html>
